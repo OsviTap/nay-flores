@@ -238,6 +238,7 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
               <AnimatePresence mode="wait">
                 <motion.article
                   key={currentPage}
+                  className="px-2"
                   initial={{ opacity: 0, x: 14, filter: 'blur(2px)' }}
                   animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, x: -14, filter: 'blur(2px)' }}

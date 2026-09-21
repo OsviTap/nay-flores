@@ -1,196 +1,192 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface MessageModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const pages = [
+interface LetterPage {
+  title: string;
+  text: string;
+}
+
+const pages: LetterPage[] = [
   {
-    text: "Se que no hablamos como antes y que muchas cosas quizás cambiaron y muchas otras pasaron, pero algo que nunca puede cambiar en mi es ese espacio que siempre tendrás en mi corazón. Eres y siempre serás esa personita muy special, alguien que nunca olvidaría.",
-    emoji: "💙",
+    title: 'Algo que permanece',
+    text: 'Sé que ya no hablamos como antes y que muchas cosas quizá cambiaron. Aun así, hay algo que no ha cambiado en mí: el lugar que siempre tendrás en mi corazón. Eres y seguirás siendo una persona muy especial para mí, alguien a quien nunca podría olvidar.',
   },
   {
-    text: "Sé que es algo contradictorio con lo que puedo demostrar, es solo que quizás me impide un poco mi timidez, lo introvertido que me dificulta poder llegar o saber cómo llegar a las personas. Al parecer es por eso mismo que soy introvertido, es que siempre me es más fácil evadir algún problema por más grande o pequeño que sea.",
-    emoji: "😔",
+    title: 'Lo que me cuesta expresar',
+    text: 'Sé que a veces puede parecer contradictorio lo que siento con lo que demuestro. Mi timidez y mi forma introvertida de ser muchas veces me dificultan acercarme o encontrar las palabras adecuadas. Durante mucho tiempo me ha resultado más fácil evadir los problemas, incluso cuando sé que debería afrontarlos.',
   },
   {
-    text: "Y bueno, siempre intento mejorar en esa situación, al menos con las personas que realmente me importan, como lo eres tú. Intenté acercarme con todo el valor y demás justo para las fechas de fiestas de agosto, donde quería ir directamente quizás al templo para poder encontrarte, igual porque trabajas ese día normal.",
-    emoji: "🙏",
+    title: 'Un intento de acercarme',
+    text: 'Siempre intento mejorar en ese aspecto, sobre todo con las personas que realmente me importan, como tú. Por eso reuní valor para intentar acercarme durante las fiestas de agosto. Incluso pensé en ir directamente al templo para poder encontrarte, tomando en cuenta que ese día también trabajabas.',
   },
   {
-    text: "Pero justo ese día sucedió algo muy inesperado, y fue que mi abuelo, el último que me queda, sufrió como una pre embolia, donde lo encontraron inconsciente en el baño de su casa, lo cual pasó así inconsciente toda la noche y pues lo llevamos de emergencia en ambulancia ese día.",
-    emoji: "💔",
+    title: 'Lo que ocurrió',
+    text: 'Sin embargo, ese día sucedió algo inesperado. Mi abuelo, el último que me queda, sufrió una emergencia médica. Lo encontraron inconsciente en el baño de su casa, después de haber pasado allí toda la noche, y tuvimos que llevarlo de urgencia en una ambulancia.',
   },
   {
-    text: "Y como mi mamá es la que siempre está ahí en todo y al ser mi abuelo, estuvimos ahí. Le hicieron una cirugía de emergencia en la madrugada por temas de la fiesta, estuvimos en eso todos esos días de fiesta quedándonos, intercambiando turnos para estar con él, lo cual por ello lo que tenía planeado se me fue todo.",
-    emoji: "🏥",
+    title: 'Esos días',
+    text: 'Como mi mamá siempre está pendiente de todo y se trataba de mi abuelo, estuvimos acompañándolo. Le realizaron una cirugía de emergencia durante la madrugada y pasamos aquellos días en el hospital, turnándonos para cuidarlo. Por esa razón, todo lo que había planeado quedó suspendido.',
   },
   {
-    text: "Pero en fin, gracias a tus estados y cortos pude ver como vas creciendo, todo lo que vas viviendo y que literalmente estás siendo como el vino 🍷. Me alegra un montón, siempre te desearé el éxito, que cada vez llegues mucho más lejos. No sabes como me alegra verte feliz con lo que haces.",
-    emoji: "✨",
+    title: 'Me alegra verte avanzar',
+    text: 'A pesar del tiempo y de la distancia, gracias a tus estados y a los videos que compartes he podido saber un poco de cómo estás y de todo lo que has vivido. Me alegra verte crecer, avanzar y disfrutar lo que haces. Siempre voy a desearte éxito y a alegrarme sinceramente por cada objetivo que consigas.',
   },
   {
-    text: "Y bueno todo lo demás que me perdí en todo este tiempo desde la última vez que hablamos. Y bueno, con todo esto espero me deje entender un poco, o al menos en parte, mi intención de intentar acercarme un poco o algo hacia tu persona. La verdad no sé si es muy egoísta, o ser sin cara de mi parte, hay muchas cosas que no sé pero sí una, y es como paso igual hace un tiempo, y es que no quisiera perder por completo la relación que alguna vez tuvimos.",
-    emoji: "🤲",
+    title: 'Lo que quisiera conservar',
+    text: 'También pienso en todo lo que me perdí desde la última vez que hablamos. Espero que esto te ayude a entender, aunque sea un poco, mi intención de acercarme nuevamente. No sé si hacerlo puede parecer egoísta o inoportuno; hay muchas cosas que todavía no sé. Pero sí tengo algo claro: no quisiera perder por completo la relación que alguna vez tuvimos.',
   },
   {
-    text: "Y si ya nunca vuelve a ser como antes, de igual manera siempre intentaré de seguirte en lo que se pueda para seguir viendo como vas progresando, como vas cumpliendo cada vez más objetivos.",
-    emoji: "💙",
+    title: 'Sin exigirte nada',
+    text: 'Y si nuestra relación nunca vuelve a ser como antes, aun así seguiré deseándote lo mejor. Me alegrará saber que continúas progresando, cumpliendo tus objetivos y construyendo la vida que quieres. No te escribo para exigirte una respuesta, sino para decirte con sinceridad lo que llevaba tiempo guardando.',
   },
 ];
 
 export function MessageModal({ isOpen, onClose }: MessageModalProps) {
   const [currentPage, setCurrentPage] = useState(0);
 
-  const nextPage = () => {
-    if (currentPage < pages.length - 1) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
+  const isFirstPage = currentPage === 0;
+  const isLastPage = currentPage === pages.length - 1;
+  const page = pages[currentPage];
 
-  const prevPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+      if (event.key === 'ArrowLeft' && !isFirstPage) {
+        setCurrentPage((previous) => previous - 1);
+      }
+      if (event.key === 'ArrowRight' && !isLastPage) {
+        setCurrentPage((previous) => previous + 1);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, isFirstPage, isLastPage, onClose]);
 
   const handleClose = () => {
     setCurrentPage(0);
     onClose();
   };
 
+  const goNext = () => {
+    if (!isLastPage) setCurrentPage((previous) => previous + 1);
+  };
+
+  const goPrevious = () => {
+    if (!isFirstPage) setCurrentPage((previous) => previous - 1);
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-3 backdrop-blur-sm sm:p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="letter-title"
+          onClick={handleClose}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
-          style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(10px)' }}
-          onClick={handleClose}
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.85, y: 30 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: 'spring', stiffness: 250, damping: 22 }}
-            onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-md rounded-2xl sm:rounded-3xl overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, rgba(10,22,40,0.98), rgba(13,40,71,0.98))',
-              border: '1px solid rgba(64,224,208,0.3)',
-              boxShadow: '0 0 50px rgba(64,224,208,0.15)',
-            }}
+          <motion.section
+            className="relative flex max-h-[min(760px,calc(100dvh-24px))] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-amber-200/30 bg-[#fffaf0] text-slate-800 shadow-2xl sm:max-h-[min(820px,calc(100dvh-48px))] sm:rounded-3xl"
+            onClick={(event) => event.stopPropagation()}
+            initial={{ y: 24, scale: 0.97 }}
+            animate={{ y: 0, scale: 1 }}
+            exit={{ y: 24, scale: 0.97 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
           >
-            {/* Barra superior */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-50" />
+            <header className="flex shrink-0 items-center justify-between border-b border-amber-900/10 bg-amber-50/80 px-5 py-4 sm:px-8 sm:py-5">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-[0.22em] text-amber-700">Una carta para Jhajaira</p>
+                <p className="mt-1 text-xs text-slate-500">21 de septiembre</p>
+              </div>
 
-            {/* Header */}
-            <div className="text-center pt-5 pb-3 px-5">
-              <motion.div
-                key={currentPage}
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 15 }}
-                className="text-4xl sm:text-5xl mb-2"
+              <button
+                type="button"
+                onClick={handleClose}
+                className="rounded-full p-2 text-slate-500 transition hover:bg-amber-100 hover:text-slate-900"
+                aria-label="Cerrar carta"
               >
-                {pages[currentPage].emoji}
-              </motion.div>
-              <p className="text-cyan-200/40 text-[10px] sm:text-xs uppercase tracking-widest">
-                {currentPage + 1} de {pages.length}
-              </p>
-            </div>
+                <span aria-hidden="true" className="text-xl leading-none">×</span>
+              </button>
+            </header>
 
-            {/* Paginador puntos */}
-            <div className="flex justify-center gap-1.5 pb-3 px-5">
-              {pages.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentPage(i)}
-                  className="w-2 h-2 rounded-full transition-all duration-300"
-                  style={{
-                    background: i === currentPage ? '#40e0d0' : 'rgba(64,224,208,0.2)',
-                    transform: i === currentPage ? 'scale(1.3)' : 'scale(1)',
-                  }}
-                />
-              ))}
-            </div>
-
-            {/* Contenido del mensaje */}
-            <div className="px-5 sm:px-6 min-h-[160px] sm:min-h-[200px]">
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-7 sm:px-12 sm:py-10">
               <AnimatePresence mode="wait">
-                <motion.p
+                <motion.article
                   key={currentPage}
-                  initial={{ opacity: 0, x: 50 }}
+                  initial={{ opacity: 0, x: 12 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.3 }}
-                  className="text-sm sm:text-base leading-relaxed text-cyan-100/85"
-                  style={{ fontFamily: "'Inter', sans-serif" }}
+                  exit={{ opacity: 0, x: -12 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  {pages[currentPage].text}
-                </motion.p>
+                  <p className="mb-3 text-sm font-medium text-amber-700">Parte {currentPage + 1}</p>
+                  <h2 id="letter-title" className="font-serif text-3xl leading-tight text-slate-900 sm:text-4xl">
+                    {page.title}
+                  </h2>
+                  <div className="mt-6 h-px w-16 bg-amber-500" />
+                  <p className="mt-6 text-[1.06rem] leading-8 text-slate-700 sm:text-lg sm:leading-9">
+                    {page.text}
+                  </p>
+                </motion.article>
               </AnimatePresence>
             </div>
 
-            {/* Botones de navegación */}
-            <div className="flex justify-between items-center px-5 sm:px-6 py-4 sm:py-5">
-              <motion.button
-                onClick={prevPage}
-                disabled={currentPage === 0}
-                whileHover={currentPage > 0 ? { scale: 1.05 } : {}}
-                whileTap={currentPage > 0 ? { scale: 0.95 } : {}}
-                className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-medium text-xs sm:text-sm transition-all"
-                style={{
-                  background: currentPage === 0 ? 'rgba(64,224,208,0.05)' : 'rgba(64,224,208,0.1)',
-                  border: '1px solid rgba(64,224,208,0.15)',
-                  color: currentPage === 0 ? 'rgba(224,247,250,0.3)' : '#e0f7fa',
-                  cursor: currentPage === 0 ? 'not-allowed' : 'pointer',
-                }}
-              >
-                ← Anterior
-              </motion.button>
+            <footer className="shrink-0 border-t border-amber-900/10 bg-white/70 px-5 py-4 sm:px-8 sm:py-5">
+              <div className="mb-4 flex items-center justify-between text-xs text-slate-500">
+                <span>{currentPage + 1} de {pages.length}</span>
+                <div className="flex gap-1.5" aria-label="Progreso de la carta">
+                  {pages.map((pageItem, index) => (
+                    <button
+                      key={pageItem.title}
+                      type="button"
+                      onClick={() => setCurrentPage(index)}
+                      aria-label={`Ir a la parte ${index + 1}`}
+                      className={`h-1.5 rounded-full transition-all ${index === currentPage ? 'w-7 bg-amber-600' : 'w-1.5 bg-amber-200 hover:bg-amber-400'}`}
+                    />
+                  ))}
+                </div>
+              </div>
 
-              {currentPage === pages.length - 1 ? (
-                <motion.button
-                  onClick={handleClose}
-                  whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(64,224,208,0.4)' }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-semibold text-xs sm:text-sm"
-                  style={{
-                    background: 'linear-gradient(135deg, #40e0d0, #20b2aa)',
-                    color: '#0a1628',
-                  }}
+              <div className="flex items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={goPrevious}
+                  disabled={isFirstPage}
+                  className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-35"
                 >
-                  Cerrar 💎
-                </motion.button>
-              ) : (
-                <motion.button
-                  onClick={nextPage}
-                  whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(64,224,208,0.4)' }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-semibold text-xs sm:text-sm"
-                  style={{
-                    background: 'linear-gradient(135deg, #40e0d0, #20b2aa)',
-                    color: '#0a1628',
-                  }}
-                >
-                  Siguiente →
-                </motion.button>
-              )}
-            </div>
+                  Anterior
+                </button>
 
-            {/* Botón cerrar */}
-            <button
-              onClick={handleClose}
-              className="absolute top-3 right-3 sm:top-4 sm:right-4 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-cyan-200/40 hover:text-cyan-200 hover:bg-cyan-900/30 transition-all"
-            >
-              ✕
-            </button>
-          </motion.div>
+                {isLastPage ? (
+                  <button
+                    type="button"
+                    onClick={handleClose}
+                    className="rounded-xl bg-amber-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-amber-700"
+                  >
+                    Cerrar carta
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={goNext}
+                    className="rounded-xl bg-amber-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-amber-700"
+                  >
+                    Continuar
+                  </button>
+                )}
+              </div>
+            </footer>
+          </motion.section>
         </motion.div>
       )}
     </AnimatePresence>

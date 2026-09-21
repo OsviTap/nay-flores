@@ -4,8 +4,8 @@ import { OrbitControls } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { Flower3D } from './components/Flower3D';
 import { PetalsCanvas } from './components/PetalsCanvas';
-import { Message } from './components/Message';
 import { CTAButtons } from './components/CTAButtons';
+import { MessageModal } from './components/MessageModal';
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
@@ -22,9 +22,11 @@ export default function App() {
   const isMobile = useIsMobile();
   const [isBlooming, setIsBlooming] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
+  const [isMessageOpen, setIsMessageOpen] = useState(false);
 
   const handleOpenGift = () => {
     setIsBlooming(true);
+    setTimeout(() => setIsMessageOpen(true), 800);
   };
 
   setTimeout(() => setShowButtons(true), 1500);
@@ -76,11 +78,14 @@ export default function App() {
         />
       </Canvas>
 
-      <Message isVisible={true} />
-
       <CTAButtons
         onOpenGift={handleOpenGift}
         showButtons={showButtons}
+      />
+
+      <MessageModal
+        isOpen={isMessageOpen}
+        onClose={() => setIsMessageOpen(false)}
       />
     </div>
   );

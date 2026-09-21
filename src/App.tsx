@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
+import { motion } from 'framer-motion';
 import { Flower3D } from './components/Flower3D';
 import { PetalsCanvas } from './components/PetalsCanvas';
 import { CTAButtons } from './components/CTAButtons';
@@ -38,6 +39,20 @@ export default function App() {
       <div className="absolute inset-0" style={{
         background: 'radial-gradient(ellipse at center bottom, rgba(64,224,208,0.1) 0%, transparent 60%)'
       }} />
+
+      <motion.header
+        className="absolute left-1/2 top-8 z-10 w-[calc(100%-2rem)] -translate-x-1/2 text-center sm:top-10"
+        initial={{ opacity: 0, y: -16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, delay: 0.25 }}
+      >
+        <p className="text-[0.65rem] font-medium uppercase tracking-[0.3em] text-[#9de8df] sm:text-xs">
+          21 de septiembre · Día de la Primavera
+        </p>
+        <h1 className="mt-3 font-serif text-3xl leading-tight text-[#fff5c7] [text-shadow:0_2px_18px_rgba(0,0,0,0.35)] sm:text-5xl">
+          Para Nay, porque contigo florece el cariño
+        </h1>
+      </motion.header>
 
       <Canvas
         camera={{

@@ -195,7 +195,7 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
           />
 
           <motion.section
-            className="relative my-auto flex w-full max-w-[280px] flex-col overflow-hidden rounded-2xl border border-[#d8be77]/70 bg-[#fffaf0] shadow-[0_20px_70px_rgba(0,0,0,0.5)] sm:max-w-xl sm:rounded-3xl"
+            className="relative my-auto flex w-full max-w-[320px] flex-col overflow-hidden rounded-2xl border border-[#d8be77]/70 bg-[#fffaf0] shadow-[0_20px_70px_rgba(0,0,0,0.5)] sm:max-w-xl sm:rounded-3xl"
             onClick={(event) => event.stopPropagation()}
             initial={{ y: 20, scale: 0.97 }}
             animate={{ y: 0, scale: 1 }}
@@ -222,7 +222,7 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
               </button>
             </header>
 
-            <main className="relative z-10 px-5 py-6 sm:px-10 sm:py-8">
+            <main className="relative z-10 h-[220px] overflow-y-auto px-5 py-6 sm:h-[280px] sm:px-10 sm:py-8">
               <AnimatePresence mode="wait">
                 <motion.article
                   key={currentPage}

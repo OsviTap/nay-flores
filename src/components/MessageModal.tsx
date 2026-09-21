@@ -159,10 +159,13 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
     const prevBodyOverflow = body.style.overflow;
     const prevHtmlPosition = html.style.position;
     const prevBodyPosition = body.style.position;
+    const prevBodyWidth = body.style.width;
 
     html.style.overflow = 'hidden';
     body.style.overflow = 'hidden';
     html.style.position = 'fixed';
+    body.style.position = 'fixed';
+    body.style.width = '100%';
     html.style.width = '100%';
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -176,6 +179,8 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
       html.style.overflow = prevHtmlOverflow;
       body.style.overflow = prevBodyOverflow;
       html.style.position = prevHtmlPosition;
+      body.style.position = prevBodyPosition;
+      body.style.width = prevBodyWidth;
       html.style.width = '';
       document.removeEventListener('keydown', handleKeyDown);
     };
@@ -185,7 +190,7 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[#090b12]/80 px-2 py-4 backdrop-blur-md sm:p-6"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto bg-[#090b12]/80 px-2 py-4 backdrop-blur-md sm:p-6"
           role="dialog"
           aria-modal="true"
           aria-labelledby="letter-heading"
@@ -234,11 +239,11 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
               </button>
             </header>
 
-            <main className="relative z-10 px-8 py-8 sm:px-12 sm:py-10">
+            <main className="relative z-10 px-7 py-9 sm:px-12 sm:py-10">
               <AnimatePresence mode="wait">
                 <motion.article
                   key={currentPage}
-                  className="px-2"
+                  className="mx-auto w-full max-w-prose px-1 sm:px-2"
                   initial={{ opacity: 0, x: 14, filter: 'blur(2px)' }}
                   animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, x: -14, filter: 'blur(2px)' }}

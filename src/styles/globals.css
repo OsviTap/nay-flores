@@ -49,3 +49,13 @@ button, a {
 .message-scroll::-webkit-scrollbar {
   display: none;
 }
+
+.letter-content {
+  padding: 2.25rem 2rem;
+}
+
+@media (min-width: 640px) {
+  .letter-content {
+    padding: 2.5rem 3rem;
+  }
+}

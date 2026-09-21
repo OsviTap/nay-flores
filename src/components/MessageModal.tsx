@@ -239,11 +239,11 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
               </button>
             </header>
 
-            <main className="relative z-10 px-7 py-9 sm:px-12 sm:py-10">
+            <main className="letter-content relative z-10">
               <AnimatePresence mode="wait">
                 <motion.article
                   key={currentPage}
-                  className="mx-auto w-full max-w-prose px-1 sm:px-2"
+                  className="mx-auto w-full max-w-prose"
                   initial={{ opacity: 0, x: 14, filter: 'blur(2px)' }}
                   animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, x: -14, filter: 'blur(2px)' }}

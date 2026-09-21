@@ -283,7 +283,7 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
               </AnimatePresence>
             </main>
 
-            <footer className="relative z-10 border-t border-[#dac797]/70 bg-[#fffdf8]/85 px-5 py-3.5 backdrop-blur-sm sm:px-7 sm:py-4">
+            <footer className="relative z-10 border-t border-[#dac797]/70 bg-[#fffdf8]/85 px-7 py-3.5 backdrop-blur-sm sm:px-10 sm:py-4">
               <div className="mb-3 flex items-center justify-between gap-4">
                 <p className="text-[0.7rem] text-[#846a3d]">Página {currentPage + 1} de {letterPages.length}</p>
                 <div className="flex items-center justify-end gap-1" aria-label="Progreso de lectura">

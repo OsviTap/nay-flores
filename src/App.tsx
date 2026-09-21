@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
@@ -6,30 +6,6 @@ import { Flower3D } from './components/Flower3D';
 import { PetalsCanvas } from './components/PetalsCanvas';
 import { Message } from './components/Message';
 import { CTAButtons } from './components/CTAButtons';
-import { CouponModal } from './components/CouponModal';
-
-const COUPON_REDEEMED_KEY = 'jhajaira-coupon-redeemed';
-
-function getExpiryTime(): number {
-  const now = new Date();
-  const boliviaOffset = -4 * 60;
-  const localOffset = now.getTimezoneOffset();
-  const diffMinutes = localOffset + boliviaOffset;
-  const boliviaTime = new Date(now.getTime() + diffMinutes * 60 * 1000);
-
-  const endOfDay = new Date(boliviaTime);
-  endOfDay.setHours(23, 59, 59, 999);
-
-  return endOfDay.getTime() - diffMinutes * 60 * 1000;
-}
-
-function formatTimeLeft(ms: number): string {
-  if (ms <= 0) return '00:00:00';
-  const hours = Math.floor(ms / (1000 * 60 * 60));
-  const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((ms % (1000 * 60)) / 1000);
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
@@ -46,38 +22,9 @@ export default function App() {
   const isMobile = useIsMobile();
   const [isBlooming, setIsBlooming] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
-  const [isCouponOpen, setIsCouponOpen] = useState(false);
-
-  const [expiryTime] = useState(() => getExpiryTime());
-  const [isRedeemed, setIsRedeemed] = useState(() => localStorage.getItem(COUPON_REDEEMED_KEY) === 'true');
-  const [timeLeft, setTimeLeft] = useState('00:00:00');
-
-  useEffect(() => {
-    const updateTimer = () => {
-      const now = Date.now();
-      const remaining = expiryTime - now;
-      setTimeLeft(formatTimeLeft(remaining));
-    };
-
-    updateTimer();
-    const interval = setInterval(updateTimer, 1000);
-    return () => clearInterval(interval);
-  }, [expiryTime]);
-
-  const getCouponStatus = useCallback((): 'active' | 'redeemed' | 'expired' => {
-    if (isRedeemed) return 'redeemed';
-    if (Date.now() > expiryTime) return 'expired';
-    return 'active';
-  }, [isRedeemed, expiryTime]);
 
   const handleOpenGift = () => {
     setIsBlooming(true);
-    setTimeout(() => setIsCouponOpen(true), 1000);
-  };
-
-  const handleRedeemCoupon = () => {
-    setIsRedeemed(true);
-    localStorage.setItem(COUPON_REDEEMED_KEY, 'true');
   };
 
   setTimeout(() => setShowButtons(true), 1500);
@@ -134,14 +81,6 @@ export default function App() {
       <CTAButtons
         onOpenGift={handleOpenGift}
         showButtons={showButtons}
-      />
-
-      <CouponModal
-        isOpen={isCouponOpen}
-        onClose={() => setIsCouponOpen(false)}
-        onRedeem={handleRedeemCoupon}
-        status={getCouponStatus()}
-        timeLeft={timeLeft}
       />
     </div>
   );

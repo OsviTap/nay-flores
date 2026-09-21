@@ -38,7 +38,7 @@ export function Message({ isVisible }: MessageProps) {
             filter: 'drop-shadow(0 4px 20px rgba(64,224,208,0.4))',
           }}
         >
-          Para Jhajaira 💎
+          Para Nay 💎
         </h1>
       </motion.div>
 

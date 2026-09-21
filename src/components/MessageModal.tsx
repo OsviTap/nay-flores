@@ -222,7 +222,7 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
               </button>
             </header>
 
-            <main className="relative z-10 h-[220px] overflow-y-auto px-5 py-6 sm:h-[280px] sm:px-10 sm:py-8">
+            <main className="relative z-10 px-6 py-8 sm:px-10 sm:py-10">
               <AnimatePresence mode="wait">
                 <motion.article
                   key={currentPage}

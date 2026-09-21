@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 interface MessageModalProps {
@@ -17,23 +17,23 @@ const letterPages: LetterPage[] = [
     chapter: 'Primera página',
     title: 'Para Nay',
     paragraphs: [
-      'Quise escribirte estas líneas con calma, no para pedirte nada ni para cambiar lo que haya cambiado, sino porque hay cosas que a veces se entienden mejor cuando se escriben con sinceridad.',
-      'Sé que ya no hablamos como antes y que el tiempo puede llevarnos por caminos distintos. Aun así, hay algo que permanece: el lugar especial que tienes en mi memoria y en mi corazón. Eres una persona que no podría olvidar.',
+      'Quise escribirte estas líneas con calma, no para pedirte nada ni para cambiar lo que haya cambiado, sino porque hay cosas que se entienden mejor cuando se dicen con sinceridad.',
+      'Sé que ya no hablamos como antes y que el tiempo puede llevarnos por caminos distintos. Aun así, sigues teniendo un lugar especial en mi memoria y en mi corazón.',
     ],
   },
   {
     chapter: 'Segunda página',
     title: 'Lo que no siempre sé decir',
     paragraphs: [
-      'Reconozco que muchas veces mis acciones no han sabido reflejar lo que pienso o siento. Mi timidez y mi forma introvertida de ser me han hecho difícil acercarme, encontrar las palabras correctas o enfrentar conversaciones que para mí significan mucho.',
-      'No es una excusa. Es algo que intento comprender y mejorar, especialmente cuando se trata de personas importantes para mí. Y tú eres una de esas personas.',
+      'Muchas veces mis acciones no han sabido reflejar lo que pienso o siento. Mi timidez y mi forma introvertida de ser me han dificultado acercarme, encontrar las palabras correctas o enfrentar conversaciones que para mí significan mucho.',
+      'No lo digo como una excusa. Es algo que intento comprender y mejorar, especialmente con las personas importantes para mí. Y tú eres una de ellas.',
     ],
   },
   {
     chapter: 'Tercera página',
     title: 'Un intento pendiente',
     paragraphs: [
-      'Durante las fiestas de agosto reuní valor para intentar acercarme. Había pensado en ir al templo para poder encontrarte, porque sabía que ese día trabajabas. Quería hacerlo de una manera sencilla, pero sincera.',
+      'Durante las fiestas de agosto reuní valor para intentar acercarme. Había pensado en ir al templo para encontrarte, porque sabía que ese día trabajabas. Quería hacerlo de una manera sencilla, pero sincera.',
       'Sin embargo, ese plan cambió de forma inesperada y no pude hacerlo como lo había imaginado.',
     ],
   },
@@ -41,7 +41,7 @@ const letterPages: LetterPage[] = [
     chapter: 'Cuarta página',
     title: 'Un momento difícil',
     paragraphs: [
-      'Ese mismo día mi abuelo sufrió una emergencia médica. Lo encontramos inconsciente y tuvimos que llevarlo de urgencia al hospital. Fueron días de incertidumbre, acompañamiento y turnos familiares para estar cerca de él.',
+      'Ese mismo día mi abuelo sufrió una emergencia médica. Tuvimos que llevarlo de urgencia al hospital y fueron días de incertidumbre, acompañamiento y turnos familiares para estar cerca de él.',
       'Todo lo que había pensado quedó en pausa. No te lo cuento para justificarme, sino porque quería que supieras por qué aquel intento no llegó a ocurrir.',
     ],
   },
@@ -49,7 +49,7 @@ const letterPages: LetterPage[] = [
     chapter: 'Quinta página',
     title: 'Verte avanzar',
     paragraphs: [
-      'A pesar del tiempo y de la distancia, he podido saber un poco de ti por lo que compartes. Me alegra verte avanzar, aprender, vivir experiencias y construir tus propios objetivos.',
+      'A pesar del tiempo y de la distancia, he podido saber un poco de ti por lo que compartes. Me alegra verte avanzar, vivir experiencias y construir tus propios objetivos.',
       'De verdad deseo que sigas llegando lejos. Me alegra saber que encuentras motivos para sonreír y que haces cosas que te hacen bien.',
     ],
   },
@@ -79,32 +79,63 @@ const letterPages: LetterPage[] = [
   },
 ];
 
+interface Spark {
+  id: number;
+  left: string;
+  top: string;
+  size: number;
+  duration: number;
+  delay: number;
+}
+
+function MagicSparks() {
+  const sparks = useMemo<Spark[]>(
+    () => Array.from({ length: 18 }, (_, id) => ({
+      id,
+      left: `${6 + Math.random() * 88}%`,
+      top: `${8 + Math.random() * 80}%`,
+      size: 2 + Math.random() * 3,
+      duration: 2.2 + Math.random() * 2.6,
+      delay: Math.random() * 2.5,
+    })),
+    [],
+  );
+
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      {sparks.map((spark) => (
+        <motion.span
+          key={spark.id}
+          className="absolute rounded-full bg-[#f8dc82] shadow-[0_0_10px_rgba(255,220,126,0.95)]"
+          style={{
+            left: spark.left,
+            top: spark.top,
+            width: spark.size,
+            height: spark.size,
+          }}
+          animate={{
+            opacity: [0, 0.95, 0.25, 0],
+            scale: [0.35, 1.25, 0.7, 0.35],
+            y: [0, -14, -24],
+          }}
+          transition={{
+            duration: spark.duration,
+            delay: spark.delay,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 export function MessageModal({ isOpen, onClose }: MessageModalProps) {
   const [currentPage, setCurrentPage] = useState(0);
 
   const isFirstPage = currentPage === 0;
   const isLastPage = currentPage === letterPages.length - 1;
   const currentLetterPage = letterPages[currentPage];
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') handleClose();
-      if (event.key === 'ArrowLeft' && !isFirstPage) goPrevious();
-      if (event.key === 'ArrowRight' && !isLastPage) goNext();
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, isFirstPage, isLastPage]);
 
   const handleClose = () => {
     setCurrentPage(0);
@@ -119,11 +150,30 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
     if (!isFirstPage) setCurrentPage((page) => page - 1);
   };
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') handleClose();
+      if (event.key === 'ArrowLeft' && !isFirstPage) goPrevious();
+      if (event.key === 'ArrowRight' && !isLastPage) goNext();
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, isFirstPage, isLastPage]);
+
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[#10100f]/70 p-3 backdrop-blur-md sm:p-6"
+          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#090b12]/75 px-3 pb-28 pt-3 backdrop-blur-md sm:items-center sm:p-6"
           role="dialog"
           aria-modal="true"
           aria-labelledby="letter-heading"
@@ -133,99 +183,100 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="pointer-events-none absolute -left-24 top-0 h-80 w-80 rounded-full bg-amber-300/20 blur-3xl"
+            className="pointer-events-none fixed -left-24 top-8 h-72 w-72 rounded-full bg-amber-300/15 blur-3xl"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
           />
           <motion.div
-            className="pointer-events-none absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-orange-400/15 blur-3xl"
+            className="pointer-events-none fixed -bottom-16 -right-16 h-80 w-80 rounded-full bg-[#6851b8]/20 blur-3xl"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
           />
 
           <motion.section
-            className="relative flex h-[min(760px,calc(100dvh-24px))] w-full max-w-3xl flex-col overflow-hidden rounded-[1.75rem] border border-[#d9c8a2] bg-[#fdf9ef] shadow-[0_24px_100px_rgba(0,0,0,0.45)] sm:h-[min(820px,calc(100dvh-48px))] sm:rounded-[2.25rem]"
+            className="relative my-auto flex w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-[#d8be78]/70 bg-[#fffaf0] shadow-[0_20px_70px_rgba(0,0,0,0.5)] sm:rounded-3xl"
             onClick={(event) => event.stopPropagation()}
-            initial={{ y: 32, scale: 0.96, rotateX: 2 }}
-            animate={{ y: 0, scale: 1, rotateX: 0 }}
-            exit={{ y: 32, scale: 0.96, rotateX: 2 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+            initial={{ y: 20, scale: 0.97 }}
+            animate={{ y: 0, scale: 1 }}
+            exit={{ y: 20, scale: 0.97 }}
+            transition={{ type: 'spring', stiffness: 280, damping: 25 }}
           >
-            <div className="pointer-events-none absolute inset-0 opacity-60" style={{ backgroundImage: 'radial-gradient(rgba(124, 89, 35, 0.16) 0.7px, transparent 0.7px)', backgroundSize: '7px 7px' }} />
-            <div className="pointer-events-none absolute left-0 top-0 h-full w-1.5 bg-gradient-to-b from-[#9f7a35] via-[#d2b46c] to-[#9f7a35]" />
-            <div className="pointer-events-none absolute right-0 top-0 h-full w-1.5 bg-gradient-to-b from-[#9f7a35] via-[#d2b46c] to-[#9f7a35]" />
+            <MagicSparks />
+            <div className="pointer-events-none absolute inset-0 opacity-50" style={{ backgroundImage: 'radial-gradient(rgba(118, 85, 34, 0.15) 0.65px, transparent 0.65px)', backgroundSize: '7px 7px' }} />
+            <div className="pointer-events-none absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#694b1d] via-[#d8b45f] to-[#694b1d]" />
+            <div className="pointer-events-none absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-[#694b1d] via-[#d8b45f] to-[#694b1d]" />
 
-            <header className="relative z-10 flex shrink-0 items-center justify-between border-b border-[#cdbb90]/60 bg-[#fffdf7]/80 px-5 py-4 backdrop-blur-sm sm:px-9 sm:py-5">
+            <header className="relative z-10 flex items-center justify-between border-b border-[#dac797]/70 bg-[#fffdf8]/80 px-5 py-3.5 backdrop-blur-sm sm:px-7 sm:py-4">
               <div>
-                <p className="font-serif text-xl tracking-wide text-[#5b4422] sm:text-2xl">Una carta para Nay</p>
-                <p className="mt-0.5 text-[0.65rem] font-medium uppercase tracking-[0.22em] text-[#9a7a43] sm:text-xs">Con respeto y sinceridad</p>
+                <p className="font-serif text-lg tracking-wide text-[#503916] sm:text-xl">Una carta para Nay</p>
+                <p className="mt-0.5 text-[0.6rem] font-medium uppercase tracking-[0.2em] text-[#96733a]">Con respeto y sinceridad</p>
               </div>
-
               <button
                 type="button"
                 onClick={handleClose}
                 aria-label="Cerrar carta"
-                className="grid h-9 w-9 place-items-center rounded-full border border-[#d4c093] text-lg text-[#775a2e] transition hover:bg-[#f3e8c9] hover:text-[#3d2d17] focus:outline-none focus:ring-2 focus:ring-[#b5904c]"
+                className="grid h-8 w-8 place-items-center rounded-full border border-[#d8c18e] text-base text-[#75572a] transition hover:bg-[#f3e8cf] hover:text-[#392811] focus:outline-none focus:ring-2 focus:ring-[#a98036]"
               >
                 <span aria-hidden="true">×</span>
               </button>
             </header>
 
-            <main className="relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-8 sm:px-16 sm:py-12">
-              <div className="mx-auto max-w-xl">
-                <AnimatePresence mode="wait">
-                  <motion.article
-                    key={currentPage}
-                    initial={{ opacity: 0, x: 18, filter: 'blur(3px)' }}
-                    animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                    exit={{ opacity: 0, x: -18, filter: 'blur(3px)' }}
-                    transition={{ duration: 0.28, ease: 'easeOut' }}
-                  >
-                    <p className="text-center text-[0.68rem] font-medium uppercase tracking-[0.28em] text-[#a27b39]">
-                      {currentLetterPage.chapter}
-                    </p>
-                    <div className="mx-auto mt-4 h-px w-14 bg-[#c39a4b]" />
+            <main className="relative z-10 px-5 py-6 sm:px-10 sm:py-8">
+              <AnimatePresence mode="wait">
+                <motion.article
+                  key={currentPage}
+                  initial={{ opacity: 0, x: 14, filter: 'blur(2px)' }}
+                  animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, x: -14, filter: 'blur(2px)' }}
+                  transition={{ duration: 0.22, ease: 'easeOut' }}
+                >
+                  <p className="text-center text-[0.6rem] font-medium uppercase tracking-[0.25em] text-[#a27b39]">
+                    {currentLetterPage.chapter}
+                  </p>
+                  <div className="mx-auto mt-3 h-px w-12 bg-[#c69b46]" />
 
-                    <h2 id="letter-heading" className="mt-6 text-center font-serif text-3xl leading-tight text-[#382713] sm:mt-7 sm:text-5xl">
-                      {currentLetterPage.title}
-                    </h2>
+                  <h2 id="letter-heading" className="mt-4 text-center font-serif text-3xl leading-tight text-[#35240f] sm:mt-5 sm:text-4xl">
+                    {currentLetterPage.title}
+                  </h2>
 
-                    <div className="mt-8 space-y-5 text-[1.04rem] leading-8 text-[#493a26] sm:mt-10 sm:text-lg sm:leading-9">
-                      {currentLetterPage.paragraphs.map((paragraph) => (
-                        <p key={paragraph} className="text-pretty first-letter:float-left first-letter:mr-2 first-letter:font-serif first-letter:text-5xl first-letter:leading-[0.8] first-letter:text-[#a97d32] sm:first-letter:text-6xl">
-                          {paragraph}
-                        </p>
-                      ))}
-                    </div>
-
-                    {isLastPage && (
-                      <motion.p
-                        className="mt-10 text-right font-serif text-xl italic text-[#755625] sm:text-2xl"
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.25 }}
+                  <div className="mt-6 space-y-4 text-[0.98rem] leading-7 text-[#493a26] sm:mt-7 sm:text-[1.05rem] sm:leading-8">
+                    {currentLetterPage.paragraphs.map((paragraph, index) => (
+                      <p
+                        key={paragraph}
+                        className={index === 0 ? 'first-letter:float-left first-letter:mr-1.5 first-letter:font-serif first-letter:text-4xl first-letter:leading-[0.8] first-letter:text-[#a97d32] sm:first-letter:text-5xl' : ''}
                       >
-                        Con aprecio.
-                      </motion.p>
-                    )}
-                  </motion.article>
-                </AnimatePresence>
-              </div>
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+
+                  {isLastPage && (
+                    <motion.p
+                      className="mt-7 text-right font-serif text-lg italic text-[#755625]"
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                    >
+                      Con aprecio.
+                    </motion.p>
+                  )}
+                </motion.article>
+              </AnimatePresence>
             </main>
 
-            <footer className="relative z-10 shrink-0 border-t border-[#cdbb90]/60 bg-[#fffdf7]/85 px-5 py-4 backdrop-blur-sm sm:px-9 sm:py-5">
-              <div className="mb-4 flex items-center justify-between gap-4">
-                <p className="text-xs text-[#846a3d]">Página {currentPage + 1} de {letterPages.length}</p>
-                <div className="flex max-w-[60%] items-center justify-end gap-1.5" aria-label="Progreso de lectura">
+            <footer className="relative z-10 border-t border-[#dac797]/70 bg-[#fffdf8]/85 px-5 py-3.5 backdrop-blur-sm sm:px-7 sm:py-4">
+              <div className="mb-3 flex items-center justify-between gap-4">
+                <p className="text-[0.7rem] text-[#846a3d]">Página {currentPage + 1} de {letterPages.length}</p>
+                <div className="flex items-center justify-end gap-1" aria-label="Progreso de lectura">
                   {letterPages.map((page, index) => (
                     <button
                       key={page.title}
                       type="button"
                       onClick={() => setCurrentPage(index)}
                       aria-label={`Ir a ${page.chapter.toLowerCase()}`}
-                      className={`h-1.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#b5904c] ${index === currentPage ? 'w-7 bg-[#a8792f]' : 'w-1.5 bg-[#dfcfa8] hover:bg-[#ba944d]'}`}
+                      className={`h-1.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#a98036] ${index === currentPage ? 'w-6 bg-[#8d6424]' : 'w-1.5 bg-[#dfcfa8] hover:bg-[#ba944d]'}`}
                     />
                   ))}
                 </div>
@@ -236,9 +287,8 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
                   type="button"
                   onClick={goPrevious}
                   disabled={isFirstPage}
-                  whileHover={isFirstPage ? undefined : { y: -1 }}
                   whileTap={isFirstPage ? undefined : { scale: 0.98 }}
-                  className="rounded-xl border border-[#cdbb90] px-4 py-2.5 text-sm font-medium text-[#5e4826] transition hover:bg-[#f5ecd6] disabled:cursor-not-allowed disabled:opacity-35 sm:px-5"
+                  className="rounded-lg border border-[#cdbb90] px-3.5 py-2 text-xs font-medium text-[#5e4826] transition hover:bg-[#f5ecd6] disabled:cursor-not-allowed disabled:opacity-35 sm:px-4 sm:text-sm"
                 >
                   Anterior
                 </motion.button>
@@ -247,9 +297,8 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
                   <motion.button
                     type="button"
                     onClick={handleClose}
-                    whileHover={{ y: -1 }}
                     whileTap={{ scale: 0.98 }}
-                    className="rounded-xl bg-[#8a6529] px-5 py-2.5 text-sm font-medium text-[#fffdf7] shadow-sm transition hover:bg-[#6d4e20] sm:px-6"
+                    className="rounded-lg bg-[#7f5b24] px-4 py-2 text-xs font-medium text-[#fffdf7] shadow-sm transition hover:bg-[#654518] sm:px-5 sm:text-sm"
                   >
                     Cerrar carta
                   </motion.button>
@@ -257,9 +306,8 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
                   <motion.button
                     type="button"
                     onClick={goNext}
-                    whileHover={{ y: -1 }}
                     whileTap={{ scale: 0.98 }}
-                    className="rounded-xl bg-[#8a6529] px-5 py-2.5 text-sm font-medium text-[#fffdf7] shadow-sm transition hover:bg-[#6d4e20] sm:px-6"
+                    className="rounded-lg bg-[#7f5b24] px-4 py-2 text-xs font-medium text-[#fffdf7] shadow-sm transition hover:bg-[#654518] sm:px-5 sm:text-sm"
                   >
                     Continuar
                   </motion.button>

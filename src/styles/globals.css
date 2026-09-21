@@ -54,8 +54,16 @@ button, a {
   padding: 2.25rem 2rem;
 }
 
+.letter-footer-controls {
+  padding-inline: 1rem;
+}
+
 @media (min-width: 640px) {
   .letter-content {
     padding: 2.5rem 3rem;
+  }
+
+  .letter-footer-controls {
+    padding-inline: 1.5rem;
   }
 }

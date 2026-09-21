@@ -299,7 +299,7 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between gap-3">
+              <div className="letter-footer-controls flex items-center justify-between gap-3">
                 <motion.button
                   type="button"
                   onClick={goPrevious}

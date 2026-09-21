@@ -224,7 +224,7 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
             <div className="pointer-events-none absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#694b1d] via-[#d8b45f] to-[#694b1d]" />
             <div className="pointer-events-none absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-[#694b1d] via-[#d8b45f] to-[#694b1d]" />
 
-            <header className="relative z-10 flex items-center justify-between border-b border-[#dac797]/70 bg-[#fffdf8]/80 px-5 py-3.5 backdrop-blur-sm sm:px-7 sm:py-4">
+            <header className="letter-header relative z-10 flex items-center justify-between border-b border-[#dac797]/70 bg-[#fffdf8]/80 py-3.5 backdrop-blur-sm sm:py-4">
               <div>
                 <p className="font-serif text-lg tracking-wide text-[#503916] sm:text-xl">Una carta para Nay</p>
                 <p className="mt-0.5 text-[0.6rem] font-medium uppercase tracking-[0.2em] text-[#96733a]">Con respeto y sinceridad</p>

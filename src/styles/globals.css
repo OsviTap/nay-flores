@@ -40,3 +40,12 @@ h1, h2, h3, .serif {
 button, a {
   -webkit-tap-highlight-color: transparent;
 }
+
+.message-scroll {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.message-scroll::-webkit-scrollbar {
+  display: none;
+}

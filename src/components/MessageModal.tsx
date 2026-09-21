@@ -173,7 +173,7 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-[#090b12]/80 px-2 pb-4 pt-3 backdrop-blur-md sm:items-center sm:p-6"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[#090b12]/80 px-2 py-4 backdrop-blur-md sm:p-6"
           role="dialog"
           aria-modal="true"
           aria-labelledby="letter-heading"

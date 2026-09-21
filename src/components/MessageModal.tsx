@@ -153,8 +153,17 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
   useEffect(() => {
     if (!isOpen) return;
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtmlOverflow = html.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
+    const prevHtmlPosition = html.style.position;
+    const prevBodyPosition = body.style.position;
+
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    html.style.position = 'fixed';
+    html.style.width = '100%';
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') handleClose();
@@ -164,7 +173,10 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.body.style.overflow = previousOverflow;
+      html.style.overflow = prevHtmlOverflow;
+      body.style.overflow = prevBodyOverflow;
+      html.style.position = prevHtmlPosition;
+      html.style.width = '';
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, isFirstPage, isLastPage]);

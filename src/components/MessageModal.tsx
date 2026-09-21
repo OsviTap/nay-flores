@@ -173,7 +173,7 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-[#090b12]/80 px-3 pb-6 pt-3 backdrop-blur-md sm:items-center sm:p-6"
+          className="fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-[#090b12]/80 px-2 pb-4 pt-3 backdrop-blur-md sm:items-center sm:p-6"
           role="dialog"
           aria-modal="true"
           aria-labelledby="letter-heading"
@@ -195,7 +195,7 @@ export function MessageModal({ isOpen, onClose }: MessageModalProps) {
           />
 
           <motion.section
-            className="relative my-auto flex w-full max-w-sm flex-col overflow-hidden rounded-2xl border border-[#d8be77]/70 bg-[#fffaf0] shadow-[0_20px_70px_rgba(0,0,0,0.5)] sm:max-w-xl sm:rounded-3xl"
+            className="relative my-auto flex w-full max-w-[280px] flex-col overflow-hidden rounded-2xl border border-[#d8be77]/70 bg-[#fffaf0] shadow-[0_20px_70px_rgba(0,0,0,0.5)] sm:max-w-xl sm:rounded-3xl"
             onClick={(event) => event.stopPropagation()}
             initial={{ y: 20, scale: 0.97 }}
             animate={{ y: 0, scale: 1 }}
